@@ -15,9 +15,16 @@ import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.container.guice.Service;
+import org.jboss.forge.furnace.container.guice.events.GuiceEventManager;
+import org.jboss.forge.furnace.event.EventManager;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
+import com.google.inject.TypeLiteral;
+import com.google.inject.matcher.Matchers;
+import com.google.inject.spi.InjectionListener;
+import com.google.inject.spi.TypeEncounter;
+import com.google.inject.spi.TypeListener;
 
 /**
  * Default {@link Module} implementation
@@ -28,8 +35,11 @@ public class GuiceContainerModule implements Module
 {
    private final Furnace furnace;
    private final AddonRegistry addonRegistry;
+   @SuppressWarnings("unused")
    private final Addon container;
+
    private Addon addon;
+   private GuiceEventManager eventManager;
 
    public GuiceContainerModule(Furnace furnace, AddonRegistry addonRegistry, Addon container)
    {
@@ -43,12 +53,35 @@ public class GuiceContainerModule implements Module
       this.addon = addon;
    }
 
+   public void setEventManager(GuiceEventManager eventManager)
+   {
+      this.eventManager = eventManager;
+   }
+
    @SuppressWarnings("unchecked")
    @Override
    public void configure(Binder binder)
    {
       binder.bind(Furnace.class).toInstance(furnace);
       binder.bind(AddonRegistry.class).toInstance(addonRegistry);
+      binder.bind(EventManager.class).toInstance(eventManager);
+      // Registering EventBus using AOP.
+      // http://www.lexicalscope.com/blog/2012/02/13/guava-eventbus-experiences/
+      binder.bindListener(Matchers.any(), new TypeListener()
+      {
+         @Override
+         public <I> void hear(TypeLiteral<I> type, TypeEncounter<I> encounter)
+         {
+            encounter.register(new InjectionListener()
+            {
+               @Override
+               public void afterInjection(Object injectee)
+               {
+                  eventManager.register(injectee);
+               }
+            });
+         }
+      });
       if (addon != null)
       {
          binder.bind(Addon.class).toInstance(addon);

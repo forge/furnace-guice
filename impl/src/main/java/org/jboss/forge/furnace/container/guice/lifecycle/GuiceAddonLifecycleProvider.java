@@ -51,14 +51,15 @@ public class GuiceAddonLifecycleProvider implements AddonLifecycleProvider
    public void start(Addon addon) throws Exception
    {
       module.setCurrentAddon(addon);
+      this.eventBus = new EventBus(addon.getId().getName());
+      this.eventManager = new GuiceEventManager(eventBus);
+      module.setEventManager(eventManager);
+
       List<Module> modules = new ArrayList<>();
       modules.add(module);
       modules.addAll(Lists.toList(ServiceLoader.load(Module.class, addon.getClassLoader())));
       this.injector = Guice.createInjector(modules);
       this.serviceRegistry = new GuiceServiceRegistry(addon, injector);
-
-      this.eventBus = new EventBus(addon.getId().getName());
-      this.eventManager = new GuiceEventManager(eventBus);
    }
 
    @Override

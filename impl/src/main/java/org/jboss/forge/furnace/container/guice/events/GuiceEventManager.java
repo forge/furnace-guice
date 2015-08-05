@@ -34,4 +34,13 @@ public class GuiceEventManager implements EventManager
       eventBus.post(event);
    }
 
+   public void register(Object listener)
+   {
+      eventBus.register(listener);
+   }
+
+   public void unregister(Object listener)
+   {
+      eventBus.unregister(listener);
+   }
 }
