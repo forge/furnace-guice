@@ -7,8 +7,11 @@
 
 package org.jboss.forge.furnace.container.guice;
 
+import com.google.inject.Module;
+
 /**
- * TODO: Document
+ * Classes registered as a Service Provider under this interface are registered through their constructors using the
+ * default {@link Module} implementation. They do not require to implement this interface.
  * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
