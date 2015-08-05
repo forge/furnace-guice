@@ -22,3 +22,51 @@ To use this addon, you must add it as a dependency in the *pom.xml* of your `for
 ----
 == Create a `com.google.inject.Module` implementation as a Service provider in your addon
 In order for Guice to detect your services, you must add a `src/main/resources/META-INF/services/com.google.inject.Module` file in your project containing the `com.google.inject.Module` implementation.
+
+== Features
+
+Observable events::
+The Furnace container publishes several observable events to all addons throughout their lifecycle. In order to listen for events, use the `@com.google.common.eventbus.Subscribe` annotation in your method.
+
+[source,java]
+----
+public class MyEmitter {
+    @Inject 
+    EventManager eventManager;
+
+    public void fire() {
+        eventManager.fireEvent("Here is an event");
+    }
+}
+
+public class MyObserver {
+
+    @Subscribe
+    public void observe(String event) {
+        // "Here is an event".equals(event) is true
+    }
+    
+}
+----
+
+Injection of Furnace APIs:: This container also allows for injection of some of the core Furnace APIs into your
+objects. Below is a list of all injectable API types.
+
+[options="header"]
+|===
+|Injectable Type |Description
+
+|@Inject private Furnace service;
+|A handle to the Furnace container in which this addon is being run.
+    
+|@Inject private Addon self;
+|A reference to this addon itself. Allows access to the addon version, `ClassLoader`, service registry, current 
+lifecycle status, and addon dependencies.
+    
+|@Inject private AddonRegistry addonRegistry;
+|A reference to the global Furnace addon registry - can be used to retrieve addon and exported service instances.
+    
+|@Inject private AddonRepository repository;
+|A reference to the repository in which this addon is deployed. Can be used to 
+    
+|===
