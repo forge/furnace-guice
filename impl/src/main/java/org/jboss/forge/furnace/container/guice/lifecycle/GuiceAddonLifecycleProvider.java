@@ -23,7 +23,6 @@ import org.jboss.forge.furnace.lifecycle.ControlType;
 import org.jboss.forge.furnace.spi.ServiceRegistry;
 import org.jboss.forge.furnace.util.Lists;
 
-import com.google.common.eventbus.EventBus;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -39,7 +38,6 @@ public class GuiceAddonLifecycleProvider implements AddonLifecycleProvider
    private GuiceEventManager eventManager;
    private GuiceServiceRegistry serviceRegistry;
    private Injector injector;
-   private EventBus eventBus;
 
    @Override
    public void initialize(Furnace furnace, AddonRegistry registry, Addon container) throws Exception
@@ -51,8 +49,7 @@ public class GuiceAddonLifecycleProvider implements AddonLifecycleProvider
    public void start(Addon addon) throws Exception
    {
       module.setCurrentAddon(addon);
-      this.eventBus = new EventBus(addon.getId().getName());
-      this.eventManager = new GuiceEventManager(eventBus);
+      this.eventManager = new GuiceEventManager(addon.getId().getName());
       module.setEventManager(eventManager);
 
       List<Module> modules = new ArrayList<>();

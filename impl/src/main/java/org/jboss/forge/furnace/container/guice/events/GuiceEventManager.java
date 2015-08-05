@@ -23,9 +23,9 @@ public class GuiceEventManager implements EventManager
 {
    private final EventBus eventBus;
 
-   public GuiceEventManager(EventBus eventBus)
+   public GuiceEventManager(String name)
    {
-      this.eventBus = eventBus;
+      this.eventBus = new EventBus(name);
    }
 
    @Override
