@@ -37,13 +37,10 @@ public class GuiceServiceRegistry implements ServiceRegistry
       this.injector = injector;
    }
 
-   @SuppressWarnings("unchecked")
    @Override
    public <T> Set<ExportedInstance<T>> getExportedInstances(Class<T> clazz)
    {
-      TypeLiteral<T> typeLiteral = new TypeLiteral()
-      {
-      };
+      TypeLiteral<T> typeLiteral = Key.get(clazz).getTypeLiteral();
       List<Binding<T>> bindings = injector.findBindingsByType(typeLiteral);
       Set<ExportedInstance<T>> instances = new HashSet<>();
       for (Binding<T> binding : bindings)
@@ -129,6 +126,14 @@ public class GuiceServiceRegistry implements ServiceRegistry
    @Override
    public boolean hasService(String clazz)
    {
+      try
+      {
+         Class<?> type = sourceAddon.getClassLoader().loadClass(clazz);
+         return hasService(type);
+      }
+      catch (ClassNotFoundException e)
+      {
+      }
       return false;
    }
 

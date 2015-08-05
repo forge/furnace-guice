@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.furnace.container.guice;
+package org.jboss.forge.furnace.container.guice.service;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
 
@@ -15,6 +15,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.archive.AddonArchive;
+import org.jboss.forge.furnace.container.guice.Service;
 import org.jboss.forge.furnace.container.guice.mock.MockInterface;
 import org.jboss.forge.furnace.container.guice.mock.MockModule;
 import org.jboss.forge.furnace.container.guice.mock.MockService;
