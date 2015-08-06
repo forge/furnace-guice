@@ -35,7 +35,7 @@ public class MyEmitter {
     EventManager eventManager;
 
     public void fire() {
-        eventManager.fireEvent("Here is an event");
+        eventManager.fireEvent("FOO");
     }
 }
 
@@ -43,7 +43,7 @@ public class MyObserver {
 
     @Subscribe
     public void observe(String event) {
-        // "Here is an event".equals(event) is true
+        // "FOO".equals(event) == true
     }
     
 }
@@ -65,8 +65,5 @@ lifecycle status, and addon dependencies.
     
 |@Inject private AddonRegistry addonRegistry;
 |A reference to the global Furnace addon registry - can be used to retrieve addon and exported service instances.
-    
-|@Inject private AddonRepository repository;
-|A reference to the repository in which this addon is deployed. Can be used to 
     
 |===
