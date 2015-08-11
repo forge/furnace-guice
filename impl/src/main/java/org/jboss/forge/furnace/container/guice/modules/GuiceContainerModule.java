@@ -7,8 +7,10 @@
 
 package org.jboss.forge.furnace.container.guice.modules;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Enumeration;
 import java.util.Scanner;
 
 import org.jboss.forge.furnace.Furnace;
@@ -87,21 +89,33 @@ public class GuiceContainerModule implements Module
          binder.bind(Addon.class).toInstance(addon);
          // Register each service
          ClassLoader classLoader = addon.getClassLoader();
-         URL resource = classLoader.getResource("META-INF/services/" + Service.class.getName());
-         if (resource != null)
+         Enumeration<URL> resources;
+         try
          {
-            try (InputStream is = resource.openStream(); Scanner sc = new Scanner(is))
+            resources = classLoader.getResources("/META-INF/services/" + Service.class.getName());
+         }
+         catch (IOException e1)
+         {
+            return;
+         }
+         while (resources.hasMoreElements())
+         {
+            URL resource = resources.nextElement();
+            if (resource != null)
             {
-               while (sc.hasNextLine())
+               try (InputStream is = resource.openStream(); Scanner sc = new Scanner(is))
                {
-                  String line = sc.nextLine();
-                  Class serviceType = classLoader.loadClass(line);
-                  binder.bind(serviceType).toConstructor(serviceType.getConstructor());
+                  while (sc.hasNextLine())
+                  {
+                     String line = sc.nextLine();
+                     Class serviceType = classLoader.loadClass(line);
+                     binder.bind(serviceType).toConstructor(serviceType.getConstructor());
+                  }
                }
-            }
-            catch (Exception e)
-            {
-               e.printStackTrace();
+               catch (Exception e)
+               {
+                  e.printStackTrace();
+               }
             }
          }
       }
