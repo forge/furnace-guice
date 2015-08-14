@@ -42,7 +42,7 @@ public class GuiceAddonLifecycleProvider implements AddonLifecycleProvider
    @Override
    public void initialize(Furnace furnace, AddonRegistry registry, Addon container) throws Exception
    {
-      this.module = new GuiceContainerModule(furnace, registry, container);
+      this.module = new GuiceContainerModule(furnace, registry);
    }
 
    @Override

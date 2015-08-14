@@ -37,17 +37,14 @@ public class GuiceContainerModule implements Module
 {
    private final Furnace furnace;
    private final AddonRegistry addonRegistry;
-   @SuppressWarnings("unused")
-   private final Addon container;
 
    private Addon addon;
    private GuiceEventManager eventManager;
 
-   public GuiceContainerModule(Furnace furnace, AddonRegistry addonRegistry, Addon container)
+   public GuiceContainerModule(Furnace furnace, AddonRegistry addonRegistry)
    {
       this.furnace = furnace;
       this.addonRegistry = addonRegistry;
-      this.container = container;
    }
 
    public void setCurrentAddon(Addon addon)
