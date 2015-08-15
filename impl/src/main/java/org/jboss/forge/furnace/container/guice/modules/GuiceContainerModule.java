@@ -81,38 +81,35 @@ public class GuiceContainerModule implements Module
       binder.bind(Furnace.class).toInstance(furnace);
       binder.bind(AddonRegistry.class).toInstance(addonRegistry);
       binder.bind(EventManager.class).toInstance(addonRegistry.getEventManager());
-      if (addon != null)
+      binder.bind(Addon.class).toInstance(addon);
+      // Register each service
+      ClassLoader classLoader = addon.getClassLoader();
+      Enumeration<URL> resources;
+      try
       {
-         binder.bind(Addon.class).toInstance(addon);
-         // Register each service
-         ClassLoader classLoader = addon.getClassLoader();
-         Enumeration<URL> resources;
-         try
+         resources = classLoader.getResources("/META-INF/services/" + Service.class.getName());
+      }
+      catch (IOException e1)
+      {
+         return;
+      }
+      while (resources.hasMoreElements())
+      {
+         URL resource = resources.nextElement();
+         if (resource != null)
          {
-            resources = classLoader.getResources("/META-INF/services/" + Service.class.getName());
-         }
-         catch (IOException e1)
-         {
-            return;
-         }
-         while (resources.hasMoreElements())
-         {
-            URL resource = resources.nextElement();
-            if (resource != null)
+            try (InputStream is = resource.openStream(); Scanner sc = new Scanner(is))
             {
-               try (InputStream is = resource.openStream(); Scanner sc = new Scanner(is))
+               while (sc.hasNextLine())
                {
-                  while (sc.hasNextLine())
-                  {
-                     String line = sc.nextLine();
-                     Class serviceType = classLoader.loadClass(line);
-                     binder.bind(serviceType).toConstructor(serviceType.getConstructor());
-                  }
+                  String line = sc.nextLine();
+                  Class serviceType = classLoader.loadClass(line);
+                  binder.bind(serviceType).toConstructor(serviceType.getConstructor());
                }
-               catch (Exception e)
-               {
-                  e.printStackTrace();
-               }
+            }
+            catch (Exception e)
+            {
+               e.printStackTrace();
             }
          }
       }
