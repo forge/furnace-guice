@@ -11,6 +11,7 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.furnace.event.EventManager;
+import org.jboss.forge.furnace.event.PostStartup;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,6 +36,7 @@ public class EventTest
    public void setUp()
    {
       this.event = null;
+      this.count = 0;
    }
 
    @Test
@@ -52,6 +54,12 @@ public class EventTest
    {
       this.event = event;
       count++;
+   }
+
+   @Subscribe
+   public void observe(PostStartup postStartup)
+   {
+      System.out.println("EVENT :" + postStartup);
    }
 
 }

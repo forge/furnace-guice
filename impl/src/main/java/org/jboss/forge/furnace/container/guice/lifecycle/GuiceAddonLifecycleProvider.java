@@ -7,9 +7,9 @@
 
 package org.jboss.forge.furnace.container.guice.lifecycle;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.ServiceLoader;
+import java.util.Set;
 
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.Addon;
@@ -18,10 +18,11 @@ import org.jboss.forge.furnace.container.guice.events.GuiceEventManager;
 import org.jboss.forge.furnace.container.guice.impl.GuiceServiceRegistry;
 import org.jboss.forge.furnace.container.guice.modules.GuiceContainerModule;
 import org.jboss.forge.furnace.event.EventManager;
+import org.jboss.forge.furnace.event.PostStartup;
+import org.jboss.forge.furnace.event.PreShutdown;
 import org.jboss.forge.furnace.lifecycle.AddonLifecycleProvider;
 import org.jboss.forge.furnace.lifecycle.ControlType;
 import org.jboss.forge.furnace.spi.ServiceRegistry;
-import org.jboss.forge.furnace.util.Lists;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -48,13 +49,18 @@ public class GuiceAddonLifecycleProvider implements AddonLifecycleProvider
    @Override
    public void start(Addon addon) throws Exception
    {
+      this.eventManager = new GuiceEventManager(addon);
+
       module.setCurrentAddon(addon);
-      this.eventManager = new GuiceEventManager(addon.getId().getName());
       module.setEventManager(eventManager);
 
-      List<Module> modules = new ArrayList<>();
+      Set<Module> modules = new LinkedHashSet<>();
       modules.add(module);
-      modules.addAll(Lists.toList(ServiceLoader.load(Module.class, addon.getClassLoader())));
+      for (Module addonModule : ServiceLoader.load(Module.class, addon.getClassLoader()))
+      {
+         modules.add(addonModule);
+      }
+
       this.injector = Guice.createInjector(modules);
       this.serviceRegistry = new GuiceServiceRegistry(addon, injector);
    }
@@ -79,11 +85,13 @@ public class GuiceAddonLifecycleProvider implements AddonLifecycleProvider
    @Override
    public void postStartup(Addon addon) throws Exception
    {
+      eventManager.fireEvent(new PostStartup(addon));
    }
 
    @Override
    public void preShutdown(Addon addon) throws Exception
    {
+      eventManager.fireEvent(new PreShutdown(addon));
    }
 
    @Override

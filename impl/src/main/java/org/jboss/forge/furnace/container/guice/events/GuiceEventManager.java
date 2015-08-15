@@ -8,9 +8,12 @@
 package org.jboss.forge.furnace.container.guice.events;
 
 import java.lang.annotation.Annotation;
+import java.util.concurrent.Callable;
 
+import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.event.EventException;
 import org.jboss.forge.furnace.event.EventManager;
+import org.jboss.forge.furnace.util.ClassLoaders;
 
 import com.google.common.eventbus.EventBus;
 
@@ -22,16 +25,33 @@ import com.google.common.eventbus.EventBus;
 public class GuiceEventManager implements EventManager
 {
    private final EventBus eventBus;
+   private final Addon addon;
 
-   public GuiceEventManager(String name)
+   public GuiceEventManager(Addon addon)
    {
-      this.eventBus = new EventBus(name);
+      this.addon = addon;
+      this.eventBus = new EventBus(addon.getId().getName());
    }
 
    @Override
-   public void fireEvent(Object event, Annotation... qualifiers) throws EventException
+   public void fireEvent(final Object event, Annotation... qualifiers) throws EventException
    {
-      eventBus.post(event);
+      try
+      {
+         ClassLoaders.executeIn(addon.getClassLoader(), new Callable<Void>()
+         {
+            @Override
+            public Void call() throws Exception
+            {
+               eventBus.post(event);
+               return null;
+            }
+         });
+      }
+      catch (Exception e)
+      {
+         throw new EventException("Could not propagate event to addon [" + addon + "]", e);
+      }
    }
 
    public void register(Object listener)

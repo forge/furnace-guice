@@ -61,9 +61,6 @@ public class GuiceContainerModule implements Module
    @Override
    public void configure(Binder binder)
    {
-      binder.bind(Furnace.class).toInstance(furnace);
-      binder.bind(AddonRegistry.class).toInstance(addonRegistry);
-      binder.bind(EventManager.class).toInstance(eventManager);
       // Registering EventBus using AOP.
       // http://www.lexicalscope.com/blog/2012/02/13/guava-eventbus-experiences/
       binder.bindListener(Matchers.any(), new TypeListener()
@@ -81,6 +78,9 @@ public class GuiceContainerModule implements Module
             });
          }
       });
+      binder.bind(Furnace.class).toInstance(furnace);
+      binder.bind(AddonRegistry.class).toInstance(addonRegistry);
+      binder.bind(EventManager.class).toInstance(addonRegistry.getEventManager());
       if (addon != null)
       {
          binder.bind(Addon.class).toInstance(addon);
