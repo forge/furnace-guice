@@ -35,7 +35,9 @@ import com.google.inject.Module;
  */
 public class GuiceAddonLifecycleProvider implements AddonLifecycleProvider
 {
-   private GuiceContainerModule module;
+   private Furnace furnace;
+   private AddonRegistry addonRegistry;
+
    private GuiceEventManager eventManager;
    private GuiceServiceRegistry serviceRegistry;
    private Injector injector;
@@ -43,19 +45,15 @@ public class GuiceAddonLifecycleProvider implements AddonLifecycleProvider
    @Override
    public void initialize(Furnace furnace, AddonRegistry registry, Addon container) throws Exception
    {
-      this.module = new GuiceContainerModule(furnace, registry);
+      this.furnace = furnace;
+      this.addonRegistry = registry;
    }
 
    @Override
    public void start(Addon addon) throws Exception
    {
-      this.eventManager = new GuiceEventManager(addon);
-
-      module.setCurrentAddon(addon);
-      module.setEventManager(eventManager);
-
       Set<Module> modules = new LinkedHashSet<>();
-      modules.add(module);
+      modules.add(new GuiceContainerModule(furnace, addonRegistry, addon));
       for (Module addonModule : ServiceLoader.load(Module.class, addon.getClassLoader()))
       {
          modules.add(addonModule);
@@ -63,6 +61,7 @@ public class GuiceAddonLifecycleProvider implements AddonLifecycleProvider
 
       this.injector = Guice.createInjector(modules);
       this.serviceRegistry = new GuiceServiceRegistry(addon, injector);
+      this.eventManager = new GuiceEventManager(serviceRegistry);
    }
 
    @Override

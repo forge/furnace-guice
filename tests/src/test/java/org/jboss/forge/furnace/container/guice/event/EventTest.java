@@ -7,17 +7,26 @@
 
 package org.jboss.forge.furnace.container.guice.event;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
+
+import java.util.List;
+
 import javax.inject.Inject;
 
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.archive.AddonArchive;
+import org.jboss.forge.furnace.container.guice.Service;
 import org.jboss.forge.furnace.event.EventManager;
 import org.jboss.forge.furnace.event.PostStartup;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.google.common.eventbus.Subscribe;
+import com.google.inject.Module;
 
 /**
  * 
@@ -26,40 +35,29 @@ import com.google.common.eventbus.Subscribe;
 @RunWith(Arquillian.class)
 public class EventTest
 {
+   @Deployment
+   @AddonDependencies
+   public static AddonArchive getDeployment()
+   {
+      return ShrinkWrap.create(AddonArchive.class)
+               .addClasses(EventModule.class, TestEventListener.class)
+               .addAsServiceProvider(Module.class, EventModule.class)
+               .addAsServiceProvider(Service.class, EventTest.class);
+   }
+
    @Inject
    EventManager eventManager;
-
-   private String event;
-   private int count;
-
-   @Before
-   public void setUp()
-   {
-      this.event = null;
-      this.count = 0;
-   }
 
    @Test
    public void testEventManager()
    {
       String originalEvent = "This is an event";
-      Assert.assertNull(event);
       eventManager.fireEvent(originalEvent);
-      Assert.assertEquals(originalEvent, event);
-      Assert.assertEquals(1, count);
-   }
-
-   @Subscribe
-   public void observe(String event)
-   {
-      this.event = event;
-      count++;
-   }
-
-   @Subscribe
-   public void observe(PostStartup postStartup)
-   {
-      System.out.println("EVENT :" + postStartup);
+      List<Object> events = TestEventListener.INSTANCE.getEvents();
+      Assert.assertEquals(2, events.size());
+      Assert.assertThat(events.get(0), instanceOf(PostStartup.class));
+      Assert.assertThat(events.get(1), instanceOf(String.class));
+      Assert.assertThat((String) events.get(1), equalTo(originalEvent));
    }
 
 }

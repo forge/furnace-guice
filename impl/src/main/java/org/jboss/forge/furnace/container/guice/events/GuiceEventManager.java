@@ -8,14 +8,12 @@
 package org.jboss.forge.furnace.container.guice.events;
 
 import java.lang.annotation.Annotation;
-import java.util.concurrent.Callable;
 
-import org.jboss.forge.furnace.addons.Addon;
+import org.jboss.forge.furnace.container.guice.EventListener;
 import org.jboss.forge.furnace.event.EventException;
 import org.jboss.forge.furnace.event.EventManager;
-import org.jboss.forge.furnace.util.ClassLoaders;
-
-import com.google.common.eventbus.EventBus;
+import org.jboss.forge.furnace.spi.ExportedInstance;
+import org.jboss.forge.furnace.spi.ServiceRegistry;
 
 /**
  * {@link EventManager} implementation for Guice
@@ -24,43 +22,20 @@ import com.google.common.eventbus.EventBus;
  */
 public class GuiceEventManager implements EventManager
 {
-   private final EventBus eventBus;
-   private final Addon addon;
+   private final ServiceRegistry serviceRegistry;
 
-   public GuiceEventManager(Addon addon)
+   public GuiceEventManager(ServiceRegistry serviceRegistry)
    {
-      this.addon = addon;
-      this.eventBus = new EventBus(addon.getId().getName());
+      this.serviceRegistry = serviceRegistry;
    }
 
    @Override
    public void fireEvent(final Object event, Annotation... qualifiers) throws EventException
    {
-      try
+      for (ExportedInstance<EventListener> instance : serviceRegistry.getExportedInstances(EventListener.class))
       {
-         ClassLoaders.executeIn(addon.getClassLoader(), new Callable<Void>()
-         {
-            @Override
-            public Void call() throws Exception
-            {
-               eventBus.post(event);
-               return null;
-            }
-         });
+         EventListener eventListener = instance.get();
+         eventListener.handleEvent(event, qualifiers);
       }
-      catch (Exception e)
-      {
-         throw new EventException("Could not propagate event to addon [" + addon + "]", e);
-      }
-   }
-
-   public void register(Object listener)
-   {
-      eventBus.register(listener);
-   }
-
-   public void unregister(Object listener)
-   {
-      eventBus.unregister(listener);
    }
 }

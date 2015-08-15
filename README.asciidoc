@@ -26,7 +26,7 @@ In order for Guice to detect your services, you must add a `src/main/resources/M
 == Features
 
 Observable events::
-The Furnace container publishes several observable events to all addons throughout their lifecycle. In order to listen for events, use the `@com.google.common.eventbus.Subscribe` annotation in your method.
+The Furnace container publishes several observable events to all addons throughout their lifecycle. In order to listen for events, implement the `org.jboss.forge.furnace.container.guice.EventListener` interface.
 
 [source,java]
 ----
@@ -39,10 +39,9 @@ public class MyEmitter {
     }
 }
 
-public class MyObserver {
+public class MyObserver implements EventListener {
 
-    @Subscribe
-    public void observe(String event) {
+    public void handleEvent(Object event, Annotation ... qualifiers) {
         // "FOO".equals(event) == true
     }
     
