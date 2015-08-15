@@ -19,7 +19,7 @@ import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.container.guice.Service;
 import org.jboss.forge.furnace.event.EventManager;
 
-import com.google.inject.Binder;
+import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 
 /**
@@ -27,7 +27,7 @@ import com.google.inject.Module;
  * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
-public class GuiceContainerModule implements Module
+public class GuiceContainerModule extends AbstractModule
 {
    private final Furnace furnace;
    private final AddonRegistry addonRegistry;
@@ -40,14 +40,26 @@ public class GuiceContainerModule implements Module
       this.addon = addon;
    }
 
-   @SuppressWarnings("unchecked")
    @Override
-   public void configure(Binder binder)
+   protected void configure()
    {
-      binder.bind(Furnace.class).toInstance(furnace);
-      binder.bind(AddonRegistry.class).toInstance(addonRegistry);
-      binder.bind(EventManager.class).toInstance(addonRegistry.getEventManager());
-      binder.bind(Addon.class).toInstance(addon);
+      bind(Furnace.class).toInstance(furnace);
+      bind(AddonRegistry.class).toInstance(addonRegistry);
+      bind(EventManager.class).toInstance(addonRegistry.getEventManager());
+      bind(Addon.class).toInstance(addon);
+
+      bindServices();
+      bindImported();
+   }
+
+   private void bindImported()
+   {
+      // bindListener(Matchers.any(), new GuiceImportedTypeListener(addonRegistry));
+   }
+
+   @SuppressWarnings("unchecked")
+   private void bindServices()
+   {
       // Register each service
       ClassLoader classLoader = addon.getClassLoader();
       Enumeration<URL> resources;
@@ -70,7 +82,7 @@ public class GuiceContainerModule implements Module
                {
                   String line = sc.nextLine();
                   Class serviceType = classLoader.loadClass(line);
-                  binder.bind(serviceType).toConstructor(serviceType.getConstructor());
+                  bind(serviceType).toConstructor(serviceType.getConstructor());
                }
             }
             catch (Exception e)
