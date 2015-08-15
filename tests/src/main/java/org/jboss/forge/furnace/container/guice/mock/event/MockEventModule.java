@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.furnace.container.guice.event;
+package org.jboss.forge.furnace.container.guice.mock.event;
 
 import org.jboss.forge.furnace.container.guice.EventListener;
 
@@ -16,12 +16,12 @@ import com.google.inject.Module;
  * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
-public class EventModule implements Module
+public class MockEventModule implements Module
 {
    @Override
    public void configure(Binder binder)
    {
-      binder.bind(EventListener.class).toInstance(TestEventListener.INSTANCE);
+      binder.bind(EventListener.class).toInstance(MockEventListener.INSTANCE);
    }
 
 }

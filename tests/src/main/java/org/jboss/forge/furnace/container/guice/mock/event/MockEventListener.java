@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.furnace.container.guice.event;
+package org.jboss.forge.furnace.container.guice.mock.event;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ import org.jboss.forge.furnace.container.guice.EventListener;
  * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
-public enum TestEventListener implements EventListener
+public enum MockEventListener implements EventListener
 {
    INSTANCE;
    private List<Object> events = new ArrayList<>();

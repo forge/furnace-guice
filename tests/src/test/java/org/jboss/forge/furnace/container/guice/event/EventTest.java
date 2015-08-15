@@ -19,6 +19,8 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.container.guice.Service;
+import org.jboss.forge.furnace.container.guice.mock.event.MockEventModule;
+import org.jboss.forge.furnace.container.guice.mock.event.MockEventListener;
 import org.jboss.forge.furnace.event.EventManager;
 import org.jboss.forge.furnace.event.PostStartup;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -40,8 +42,8 @@ public class EventTest
    public static AddonArchive getDeployment()
    {
       return ShrinkWrap.create(AddonArchive.class)
-               .addClasses(EventModule.class, TestEventListener.class)
-               .addAsServiceProvider(Module.class, EventModule.class)
+               .addClasses(MockEventModule.class, MockEventListener.class)
+               .addAsServiceProvider(Module.class, MockEventModule.class)
                .addAsServiceProvider(Service.class, EventTest.class);
    }
 
@@ -53,7 +55,7 @@ public class EventTest
    {
       String originalEvent = "This is an event";
       eventManager.fireEvent(originalEvent);
-      List<Object> events = TestEventListener.INSTANCE.getEvents();
+      List<Object> events = MockEventListener.INSTANCE.getEvents();
       Assert.assertEquals(2, events.size());
       Assert.assertThat(events.get(0), instanceOf(PostStartup.class));
       Assert.assertThat(events.get(1), instanceOf(String.class));
