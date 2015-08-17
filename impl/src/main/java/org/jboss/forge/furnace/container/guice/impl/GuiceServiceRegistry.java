@@ -137,4 +137,9 @@ public class GuiceServiceRegistry implements ServiceRegistry
       return false;
    }
 
+   @Override
+   public void close() throws Exception
+   {
+   }
+
 }
