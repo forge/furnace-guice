@@ -21,6 +21,7 @@ import org.jboss.forge.furnace.event.EventManager;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
+import com.google.inject.matcher.Matchers;
 
 /**
  * Default {@link Module} implementation
@@ -54,7 +55,7 @@ public class GuiceContainerModule extends AbstractModule
 
    private void bindImported()
    {
-      // bindListener(Matchers.any(), new GuiceImportedTypeListener(addonRegistry));
+      bindListener(Matchers.any(), new ServiceTypeListener(addonRegistry));
    }
 
    @SuppressWarnings("unchecked")
