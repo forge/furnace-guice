@@ -22,7 +22,6 @@ import org.jboss.forge.furnace.container.guice.mock.services.ExportedService;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -33,7 +32,6 @@ import com.google.inject.Module;
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
 @RunWith(Arquillian.class)
-@Ignore("Cross container lookup still doesn't work")
 public class AddonServiceDifferentContainerTest
 {
    @Deployment(order = 0)
