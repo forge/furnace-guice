@@ -7,8 +7,11 @@
 
 package org.jboss.forge.furnace.container.guice.service;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
+
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -27,6 +30,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import com.google.common.collect.Sets;
 import com.google.inject.Module;
 
 /**
@@ -56,5 +60,19 @@ public class AddonRegistryTest
       Assert.assertThat(service.isAmbiguous(), is(false));
       Assert.assertThat(service.isUnsatisfied(), is(false));
       Assert.assertThat(service.get(), notNullValue());
+   }
+
+   @Test
+   public void testExportedTypes() throws Exception
+   {
+      Set<Class<?>> exportedTypes = addonRegistry.getExportedTypes();
+
+      Set<Class<?>> expectedTypes = Sets.newHashSet(
+               MockInterface.class,
+               MockService.class,
+               AddonRegistryTest.class
+      );
+
+      Assert.assertThat(exportedTypes, equalTo(expectedTypes));
    }
 }

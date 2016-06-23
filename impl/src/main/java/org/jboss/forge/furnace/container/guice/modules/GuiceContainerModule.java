@@ -19,16 +19,15 @@ import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.container.guice.Service;
 import org.jboss.forge.furnace.event.EventManager;
 
-import com.google.inject.AbstractModule;
 import com.google.inject.Module;
-import com.google.inject.matcher.Matchers;
+import com.google.inject.PrivateModule;
 
 /**
  * Default {@link Module} implementation
  * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
-public class GuiceContainerModule extends AbstractModule
+public class GuiceContainerModule extends PrivateModule
 {
    private final Furnace furnace;
    private final AddonRegistry addonRegistry;
@@ -50,12 +49,6 @@ public class GuiceContainerModule extends AbstractModule
       bind(Addon.class).toInstance(addon);
 
       bindServices();
-      bindImported();
-   }
-
-   private void bindImported()
-   {
-      bindListener(Matchers.any(), new ServiceTypeListener(addonRegistry));
    }
 
    @SuppressWarnings("unchecked")
@@ -84,6 +77,7 @@ public class GuiceContainerModule extends AbstractModule
                   String line = sc.nextLine();
                   Class serviceType = classLoader.loadClass(line);
                   bind(serviceType).toConstructor(serviceType.getConstructor());
+                  expose(serviceType);
                }
             }
             catch (Exception e)

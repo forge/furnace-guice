@@ -9,16 +9,20 @@ package org.jboss.forge.furnace.container.guice.impl;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.spi.ExportedInstance;
 import org.jboss.forge.furnace.spi.ServiceRegistry;
 
+import com.google.common.collect.Sets;
 import com.google.inject.Binding;
 import com.google.inject.Injector;
 import com.google.inject.Key;
+import com.google.inject.Stage;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -27,6 +31,12 @@ import com.google.inject.TypeLiteral;
  */
 public class GuiceServiceRegistry implements ServiceRegistry
 {
+   private static final Set<Class> DEFAULT_GUICE_BINDINGS = Sets.newHashSet(
+           Injector.class,
+           Stage.class,
+           Logger.class
+   );
+
    private final Addon sourceAddon;
    private final Injector injector;
 
@@ -90,12 +100,10 @@ public class GuiceServiceRegistry implements ServiceRegistry
    @Override
    public Set<Class<?>> getExportedTypes()
    {
-      Map<Key<?>, Binding<?>> allBindings = injector.getAllBindings();
-      Set<Class<?>> types = new HashSet<>();
-      for (Key<?> key : allBindings.keySet())
-      {
-         types.add(key.getTypeLiteral().getRawType());
-      }
+      Set<Class<?>> types = streamExposedTypes()
+              .map(rawType -> (Class<?>) rawType)
+              .collect(Collectors.toSet());
+
       return types;
    }
 
@@ -103,17 +111,21 @@ public class GuiceServiceRegistry implements ServiceRegistry
    @Override
    public <T> Set<Class<T>> getExportedTypes(Class<T> type)
    {
-      Map<Key<?>, Binding<?>> allBindings = injector.getAllBindings();
-      Set<Class<T>> types = new HashSet<>();
-      for (Key<?> key : allBindings.keySet())
-      {
-         Class<?> rawType = key.getTypeLiteral().getRawType();
-         if (rawType.isAssignableFrom(type))
-         {
-            types.add((Class<T>) rawType);
-         }
-      }
+      Set<Class<T>> types = streamExposedTypes()
+              .filter(rawType -> rawType.isAssignableFrom(type))
+              .map(rawType -> (Class<T>) rawType)
+              .collect(Collectors.toSet());
+
       return types;
+   }
+
+   private Stream<Class> streamExposedTypes()
+   {
+      Stream<Class> stream = injector.getAllBindings().values().stream()
+              .map(binding -> (Class) binding.getKey().getTypeLiteral().getRawType())
+              .filter(rawType -> !DEFAULT_GUICE_BINDINGS.contains(rawType));
+
+      return stream;
    }
 
    @Override
