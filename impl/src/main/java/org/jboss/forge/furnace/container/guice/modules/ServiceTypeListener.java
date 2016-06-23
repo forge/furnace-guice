@@ -41,7 +41,7 @@ public class ServiceTypeListener implements TypeListener
          for (Field field : clazz.getDeclaredFields())
          {
             boolean hasInjectAnnotation = field.isAnnotationPresent(Inject.class) ||
-                    !field.isAnnotationPresent(javax.inject.Inject.class);
+                     field.isAnnotationPresent(javax.inject.Inject.class);
 
             if (!hasInjectAnnotation) {
                continue;
