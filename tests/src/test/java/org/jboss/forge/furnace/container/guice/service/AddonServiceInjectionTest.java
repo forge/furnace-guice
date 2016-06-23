@@ -18,6 +18,7 @@ import org.jboss.forge.furnace.container.guice.Service;
 import org.jboss.forge.furnace.container.guice.mock.services.AbstractBaseConsumer;
 import org.jboss.forge.furnace.container.guice.mock.services.ConcreteConsumer;
 import org.jboss.forge.furnace.container.guice.mock.services.ConsumerModule;
+import org.jboss.forge.furnace.container.guice.mock.services.ExplicitBindingsModule;
 import org.jboss.forge.furnace.container.guice.mock.services.ExportedService;
 import org.jboss.forge.furnace.container.guice.mock.services.ProducerModule;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
@@ -44,8 +45,7 @@ public class AddonServiceInjectionTest
       AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
                .addClass(ConcreteConsumer.class)
                .addAsServiceProvider(Service.class, AddonServiceInjectionTest.class)
-               .addClass(ConsumerModule.class)
-               .addAsServiceProvider(Module.class, ConsumerModule.class)
+               .addAsServiceProviderAndClasses(Module.class, ConsumerModule.class, ExplicitBindingsModule.class)
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:guice"),
                         AddonDependencyEntry.create("dependency"));
@@ -58,8 +58,7 @@ public class AddonServiceInjectionTest
    {
       AddonArchive archive = ShrinkWrap.create(AddonArchive.class, "dependency.jar")
                .addClasses(AbstractBaseConsumer.class, ExportedService.class)
-               .addClass(ProducerModule.class)
-               .addAsServiceProvider(Module.class, ProducerModule.class)
+               .addAsServiceProviderAndClasses(Module.class, ProducerModule.class, ExplicitBindingsModule.class)
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:guice"));
 

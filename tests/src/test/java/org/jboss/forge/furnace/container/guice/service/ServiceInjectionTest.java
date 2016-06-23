@@ -19,6 +19,7 @@ import org.jboss.forge.furnace.container.guice.Service;
 import org.jboss.forge.furnace.container.guice.mock.MockInterface;
 import org.jboss.forge.furnace.container.guice.mock.MockModule;
 import org.jboss.forge.furnace.container.guice.mock.MockService;
+import org.jboss.forge.furnace.container.guice.mock.services.ExplicitBindingsModule;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -41,8 +42,8 @@ public class ServiceInjectionTest
    public static AddonArchive getDeployment()
    {
       return ShrinkWrap.create(AddonArchive.class)
-               .addClasses(MockInterface.class, MockService.class, MockModule.class)
-               .addAsServiceProvider(Module.class, MockModule.class)
+               .addClasses(MockInterface.class, MockService.class)
+               .addAsServiceProviderAndClasses(Module.class, MockModule.class, ExplicitBindingsModule.class)
                .addAsServiceProvider(Service.class, ServiceInjectionTest.class);
    }
 

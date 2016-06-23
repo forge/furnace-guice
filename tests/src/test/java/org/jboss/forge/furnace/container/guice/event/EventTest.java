@@ -21,6 +21,7 @@ import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.container.guice.Service;
 import org.jboss.forge.furnace.container.guice.mock.event.MockEventModule;
 import org.jboss.forge.furnace.container.guice.mock.event.MockEventListener;
+import org.jboss.forge.furnace.container.guice.mock.services.ExplicitBindingsModule;
 import org.jboss.forge.furnace.event.EventManager;
 import org.jboss.forge.furnace.event.PostStartup;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -42,8 +43,8 @@ public class EventTest
    public static AddonArchive getDeployment()
    {
       return ShrinkWrap.create(AddonArchive.class)
-               .addClasses(MockEventModule.class, MockEventListener.class)
-               .addAsServiceProvider(Module.class, MockEventModule.class)
+               .addClasses(MockEventListener.class)
+               .addAsServiceProviderAndClasses(Module.class, MockEventModule.class, ExplicitBindingsModule.class)
                .addAsServiceProvider(Service.class, EventTest.class);
    }
 

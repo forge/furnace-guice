@@ -19,6 +19,7 @@ import org.jboss.forge.furnace.container.guice.mock.services.AbstractBaseConsume
 import org.jboss.forge.furnace.container.guice.mock.services.ConcreteConsumer;
 import org.jboss.forge.furnace.container.guice.mock.services.ConsumerModule;
 import org.jboss.forge.furnace.container.guice.mock.services.ExportedService;
+import org.jboss.forge.furnace.container.guice.mock.services.ExplicitBindingsModule;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
@@ -42,8 +43,7 @@ public class AddonServiceDifferentContainerTest
    {
       AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
                .addClass(ConcreteConsumer.class)
-               .addClass(ConsumerModule.class)
-               .addAsServiceProvider(Module.class, ConsumerModule.class)
+               .addAsServiceProviderAndClasses(Module.class, ConsumerModule.class, ExplicitBindingsModule.class)
                .addAsServiceProvider(Service.class, AddonServiceDifferentContainerTest.class)
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:guice"),
