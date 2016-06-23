@@ -18,6 +18,6 @@ public class ConsumerModule extends AbstractModule
    @Override
    protected void configure()
    {
-      bind(AbstractBaseConsumer.class).to(ConcreteConsumer.class);
+      bind(ConcreteConsumer.class);
    }
 }

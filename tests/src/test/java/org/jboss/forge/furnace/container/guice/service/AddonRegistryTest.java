@@ -24,6 +24,7 @@ import org.jboss.forge.furnace.container.guice.Service;
 import org.jboss.forge.furnace.container.guice.mock.MockInterface;
 import org.jboss.forge.furnace.container.guice.mock.MockModule;
 import org.jboss.forge.furnace.container.guice.mock.MockService;
+import org.jboss.forge.furnace.container.guice.mock.services.ExplicitBindingsModule;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
@@ -48,8 +49,8 @@ public class AddonRegistryTest
    public static AddonArchive getDeployment()
    {
       return ShrinkWrap.create(AddonArchive.class)
-               .addClasses(MockInterface.class, MockService.class, MockModule.class)
-               .addAsServiceProvider(Module.class, MockModule.class)
+               .addClasses(MockInterface.class, MockService.class)
+               .addAsServiceProviderAndClasses(Module.class, MockModule.class, ExplicitBindingsModule.class)
                .addAsServiceProvider(Service.class, AddonRegistryTest.class);
    }
 
@@ -70,8 +71,7 @@ public class AddonRegistryTest
       Set<Class<?>> expectedTypes = Sets.newHashSet(
                MockInterface.class,
                MockService.class,
-               AddonRegistryTest.class
-      );
+               AddonRegistryTest.class);
 
       Assert.assertThat(exportedTypes, equalTo(expectedTypes));
    }
