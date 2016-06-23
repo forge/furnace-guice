@@ -56,7 +56,7 @@ public class AddonServiceDifferentContainerTest
    public static AddonArchive getDependencyDeployment()
    {
       AddonArchive archive = ShrinkWrap.create(AddonArchive.class, "dependency.jar")
-               .addClasses(AbstractBaseConsumer.class, ExportedService.class)
+               .addClasses(AbstractBaseConsumer.class, ExportedService.class, Inject.class)
                .addAsLocalServices(ExportedService.class);
 
       return archive;
