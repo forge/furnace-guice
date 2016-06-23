@@ -17,6 +17,7 @@ import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.container.guice.events.GuiceEventManager;
 import org.jboss.forge.furnace.container.guice.impl.GuiceServiceRegistry;
 import org.jboss.forge.furnace.container.guice.modules.GuiceContainerModule;
+import org.jboss.forge.furnace.container.guice.modules.ServiceTypeListener;
 import org.jboss.forge.furnace.event.EventManager;
 import org.jboss.forge.furnace.event.PostStartup;
 import org.jboss.forge.furnace.event.PreShutdown;
@@ -26,7 +27,9 @@ import org.jboss.forge.furnace.spi.ServiceRegistry;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.matcher.Matchers;
 import com.google.inject.Module;
+import com.google.inject.Stage;
 
 /**
  * {@link AddonLifecycleProvider} instance for Guice
@@ -54,12 +57,14 @@ public class GuiceAddonLifecycleProvider implements AddonLifecycleProvider
    {
       Set<Module> modules = new LinkedHashSet<>();
       modules.add(new GuiceContainerModule(furnace, addonRegistry, addon));
+      modules.add(binder -> binder.bindListener(Matchers.any(), new ServiceTypeListener(addonRegistry)));
+
       for (Module addonModule : ServiceLoader.load(Module.class, addon.getClassLoader()))
       {
          modules.add(addonModule);
       }
 
-      this.injector = Guice.createInjector(modules);
+      this.injector = Guice.createInjector(Stage.PRODUCTION, modules);
       this.serviceRegistry = new GuiceServiceRegistry(addon, injector);
       this.eventManager = new GuiceEventManager(serviceRegistry);
    }
