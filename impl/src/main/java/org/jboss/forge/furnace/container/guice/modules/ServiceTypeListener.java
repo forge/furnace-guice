@@ -43,7 +43,8 @@ public class ServiceTypeListener implements TypeListener
             boolean hasInjectAnnotation = field.isAnnotationPresent(Inject.class) ||
                      field.isAnnotationPresent(javax.inject.Inject.class);
 
-            if (!hasInjectAnnotation) {
+            if (!hasInjectAnnotation)
+            {
                continue;
             }
 
