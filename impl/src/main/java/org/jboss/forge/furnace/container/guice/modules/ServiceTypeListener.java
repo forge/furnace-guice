@@ -7,6 +7,7 @@
 
 package org.jboss.forge.furnace.container.guice.modules;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
 import org.jboss.forge.furnace.addons.AddonRegistry;
@@ -40,8 +41,23 @@ public class ServiceTypeListener implements TypeListener
       {
          for (Field field : clazz.getDeclaredFields())
          {
-            boolean hasInjectAnnotation = field.isAnnotationPresent(Inject.class) ||
-                     field.isAnnotationPresent(javax.inject.Inject.class);
+            boolean hasInjectAnnotation = false;
+
+            for (Annotation annotation : field.getAnnotations())
+            {
+               String annotationTypeName = annotation.annotationType().getName();
+               if (Inject.class.getName().equals(annotationTypeName))
+               {
+                  hasInjectAnnotation = true;
+                  break;
+               }
+
+               if (javax.inject.Inject.class.getName().equals(annotationTypeName))
+               {
+                  hasInjectAnnotation = true;
+                  break;
+               }
+            }
 
             if (!hasInjectAnnotation)
             {
