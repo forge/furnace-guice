@@ -30,7 +30,7 @@
     <forge.developer.connection>scm:git:git@github.com:forge/furnace-guice.git</forge.developer.connection>
     <forge.scm.url>https://github.com/forge/furnace-guice</forge.scm.url>
 
-    <version.furnace>2.23.5.Final</version.furnace>
+    <version.furnace>2.24.3.Final</version.furnace>
     <version.junit>4.12</version.junit>
     <version.guice>4.0</version.guice>
   </properties>
