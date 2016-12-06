@@ -1,5 +1,10 @@
 == Furnace Container: Guice
 :idprefix: id_ 
+
+image:https://forge.ci.cloudbees.com/job/furnace-guice/badge/icon["Build Status", link="https://forge.ci.cloudbees.com/job/furnace-guice/"] 
+image:http://img.shields.io/:license-EPL-blue.svg["License", link="https://www.eclipse.org/legal/epl-v10.html"] 
+image:https://maven-badges.herokuapp.com/maven-central/org.jboss.forge.furnace.container/guice/badge.svg["Maven Central", link="https://maven-badges.herokuapp.com/maven-central/org.jboss.forge.furnace.container/guice"] 
+
 This addon is a 'Furnace container' that provides lifecycle and service registry support for dependent addons. Other addons may depend on this to use the Guice programming model and dependency injection framework.
        
 === Dependencies: None
