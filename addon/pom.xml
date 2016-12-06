@@ -4,7 +4,7 @@
    <parent>
       <groupId>org.jboss.forge.furnace.container</groupId>
       <artifactId>guice-parent</artifactId>
-      <version>1.0.0.Alpha2</version>
+      <version>1.0.0-SNAPSHOT</version>
    </parent>
    <artifactId>guice</artifactId>
    <dependencies>
