@@ -8,7 +8,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jboss.forge.furnace.container</groupId>
   <artifactId>guice-parent</artifactId>
-  <version>1.0.0.Beta1</version>
+  <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <licenses>
@@ -149,7 +149,7 @@
     <connection>${forge.scm.connection}</connection>
     <developerConnection>${forge.developer.connection}</developerConnection>
     <url>${forge.scm.url}</url>
-    <tag>1.0.0.Beta1</tag>
+    <tag>1.0.0.Alpha2</tag>
   </scm>
 
   <distributionManagement>
